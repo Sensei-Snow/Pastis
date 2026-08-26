@@ -3,7 +3,13 @@
 
     #include <windows.h>
 
-    BOOL getClipboardText(wchar_t *text, size_t size);
+    typedef enum {
+        STATE_OK,
+        STATE_WARNING,
+        STATE_ERROR
+    } StateCode;
+
+    StateCode getClipboardText(wchar_t *text, size_t size);
     BOOL setClipboardText(wchar_t *text, size_t size);
 
 #endif

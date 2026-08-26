@@ -1,17 +1,19 @@
 #include <windows.h>
 #include <stdio.h>
 
-BOOL getClipboardText(wchar_t *text, size_t size)
+#include "clipboard.h"
+
+StateCode getClipboardText(wchar_t *text, size_t size)
 {
     if (!OpenClipboard(NULL)) {
-        return FALSE;
+        return STATE_ERROR;
     }
 
     HANDLE hClipboardData = GetClipboardData(CF_UNICODETEXT);
 
     if (hClipboardData == NULL) {
         CloseClipboard();
-        return FALSE;
+        return STATE_WARNING;
     }
 
     wchar_t *clipboardText = GlobalLock(hClipboardData);
@@ -19,7 +21,7 @@ BOOL getClipboardText(wchar_t *text, size_t size)
     if (clipboardText == NULL) {
         GlobalUnlock(hClipboardData);
         CloseClipboard();
-        return FALSE;
+        return STATE_WARNING;
     }
 
     wcsncpy_s(text, size, clipboardText, _TRUNCATE);
@@ -27,7 +29,7 @@ BOOL getClipboardText(wchar_t *text, size_t size)
     GlobalUnlock(hClipboardData);
     CloseClipboard();
 
-    return TRUE;
+    return STATE_OK;
 }
 
 BOOL setClipboardText(wchar_t *text, size_t size) {
