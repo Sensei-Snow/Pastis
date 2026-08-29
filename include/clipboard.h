@@ -3,13 +3,9 @@
 
     #include <windows.h>
 
-    typedef enum {
-        STATE_OK,
-        STATE_WARNING,
-        STATE_ERROR
-    } StateCode;
+    #include "utils.h"
 
-    StateCode getClipboardText(wchar_t *text, size_t size);
+    StateCodeProcess getClipboardText(wchar_t *text, size_t size);
     BOOL setClipboardText(wchar_t *text, size_t size);
 
 #endif

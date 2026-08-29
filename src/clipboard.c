@@ -3,7 +3,7 @@
 
 #include "clipboard.h"
 
-StateCode getClipboardText(wchar_t *text, size_t size)
+StateCodeProcess getClipboardText(wchar_t *text, size_t size)
 {
     if (!OpenClipboard(NULL)) {
         return STATE_ERROR;
