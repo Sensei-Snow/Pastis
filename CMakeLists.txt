@@ -8,7 +8,8 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 
 file(GLOB SOURCES "src/*.c")
 
-add_executable(${PROJECT_NAME} ${SOURCES}
+add_executable(${PROJECT_NAME} WIN32
+        ${SOURCES}
         src/main.c
         src/clipboard.c
         include/clipboard.h
