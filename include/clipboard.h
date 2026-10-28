@@ -6,6 +6,6 @@
     #include "utils.h"
 
     StateCodeProcess getClipboardText(wchar_t *text, size_t size);
-    BOOL setClipboardText(wchar_t *text, size_t size);
+    StateCodeProcess setClipboardText(wchar_t *text, size_t size);
 
 #endif

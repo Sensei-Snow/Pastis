@@ -32,21 +32,21 @@ StateCodeProcess getClipboardText(wchar_t *text, size_t size)
     return STATE_OK;
 }
 
-BOOL setClipboardText(wchar_t *text, size_t size) {
+StateCodeProcess setClipboardText(wchar_t *text, size_t size) {
     if (!OpenClipboard(NULL)) {
-        return FALSE;
+        return STATE_ERROR;
     }
 
     if (!EmptyClipboard()) {
         CloseClipboard();
-        return FALSE;
+        return STATE_WARNING;
     }
 
     HGLOBAL hMemory = GlobalAlloc(GMEM_MOVEABLE, size);
 
     if (hMemory == NULL) {
         CloseClipboard();
-        return FALSE;
+        return STATE_WARNING;
     }
 
     wchar_t *ptr = GlobalLock(hMemory);
@@ -54,7 +54,7 @@ BOOL setClipboardText(wchar_t *text, size_t size) {
     if (ptr == NULL) {
         GlobalFree(hMemory);
         CloseClipboard();
-        return FALSE;
+        return STATE_WARNING;
     }
 
     memcpy(ptr, text, size);
@@ -65,9 +65,9 @@ BOOL setClipboardText(wchar_t *text, size_t size) {
     if (hClipboardData == NULL) {
         GlobalFree(hMemory);
         CloseClipboard();
-        return FALSE;
+        return STATE_WARNING;
     }
 
     CloseClipboard();
-    return TRUE;
+    return STATE_OK;
 }

