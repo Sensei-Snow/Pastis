@@ -1,3 +1,10 @@
+/*
+ * @file        main.c
+ * @author      $now_
+ * @updated     29/10/2026
+ * @brief       Programme principal pour surveiller et modifier le presse-papiers.
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <windows.h>

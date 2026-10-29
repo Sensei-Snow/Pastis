@@ -1,3 +1,11 @@
+/*
+ * @file        config_read.c
+ * @see         config_read.h
+ * @author      $now_
+ * @updated     29/10/2026
+ * @brief       Fichier d'implémentation pour la lecture des fichiers de configuration en ".ini".
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <windows.h>

@@ -1,3 +1,11 @@
+/*
+ * @file        clipboard.c
+ * @see         clipboard.h
+ * @author      $now_
+ * @updated     29/10/2026
+ * @brief       Fichier d'implémentation pour la gestion du presse-papiers Windows.
+ */
+
 #include <windows.h>
 #include <stdio.h>
 
