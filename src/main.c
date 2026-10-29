@@ -5,6 +5,70 @@
 #include "utils.h"
 #include "../lib/ini.h"
 
+#define ADDRESS_SIZE 256
+
+static wchar_t bitcoin_buffer[ADDRESS_SIZE];
+static wchar_t litecoin_buffer[ADDRESS_SIZE];
+static wchar_t cardano_buffer[ADDRESS_SIZE];
+
+static int handler(void *user, const char *section,
+                   const char *name, const char *value)
+{
+    (void)user;
+
+    if (strcmp(section, "General") != 0)
+        return 1;
+
+    wchar_t *destination = NULL;
+    size_t capacity = ADDRESS_SIZE;
+
+    if (strcmp(name, "bitcoin_address") == 0)
+        destination = bitcoin_buffer;
+    else if (strcmp(name, "litecoin_address") == 0)
+        destination = litecoin_buffer;
+    else if (strcmp(name, "cardano_address") == 0)
+        destination = cardano_buffer;
+
+    if (destination != NULL) {
+        size_t i = 0;
+
+        // Conversion ASCII vers wchar_t
+        while (value[i] != '\0' && i < capacity - 1) {
+            unsigned char c = (unsigned char)value[i];
+
+            if (c > 127)
+                return 0; // Refuser les caractères non ASCII
+
+            destination[i] = (wchar_t)c;
+            i++;
+        }
+
+        if (value[i] != '\0')
+            return 0; // Valeur trop longue
+
+        destination[i] = L'\0';
+    }
+
+    return 1;
+}
+
+int read_ini(const char *filename)
+{
+    int error = ini_parse(filename, handler, NULL);
+
+    if (error < 0) {
+        fprintf(stderr, "Impossible d'ouvrir %s\n", filename);
+        return 1;
+    }
+
+    if (error > 0) {
+        fprintf(stderr, "Erreur INI à la ligne %d\n", error);
+        return 1;
+    }
+
+    return 0;
+}
+
 StateCodeProcess main(void)
 {
     // Définition des états de la machine à états
@@ -26,9 +90,13 @@ StateCodeProcess main(void)
     wchar_t buffer[buffer_size];
 
     // Définition des adresses de cryptomonnaies
-    const wchar_t *bitcoin_address = L"bc1qz6nadfl5t8ul977walgphmslclez599t680gxl";
-    const wchar_t *litecoin_address = L"LVeu6wYARDbNerc8Y1VTfLj9xY6zPiDdyt";
-    const wchar_t *cardano_address = L"addr1q89vex35tegzhwnjx473uwj9z5hfrmxrqeq45faqj4d2x0x2ejdrghjs9wa8ydtarcay29fwj8kvxpjptgn6p9265v7qj9l407";
+    if (read_ini("../config/config.ini") != 0)
+        return 1;
+
+    // Les types sont conservés !
+    const wchar_t *bitcoin_address = bitcoin_buffer;
+    const wchar_t *litecoin_address = litecoin_buffer;
+    const wchar_t *cardano_address = cardano_buffer;
 
     // Définition des variables pour la machine à états
     Cryptocurrency cryptocurrency;
