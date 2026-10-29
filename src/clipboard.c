@@ -68,7 +68,8 @@ StateCodeProcess getClipboardText(wchar_t *text, size_t size)
  * Le code vide d'abord le clipboard, puis alloue une zone mémoire Windows pouvant accueillir
  * le texte en UTF-16, avant de la publier dans le système.
  */
-StateCodeProcess setClipboardText(wchar_t *text, size_t size) {
+StateCodeProcess setClipboardText(wchar_t *text, size_t size)
+{
     /*
      * On demande l'accès exclusif au presse-papiers pour éviter qu'un autre programme
      * n'écrive pendant que l'on lit les données.

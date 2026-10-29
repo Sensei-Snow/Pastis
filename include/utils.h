@@ -1,6 +1,8 @@
 #ifndef PASTIS_UTILS_H
     #define PASTIS_UTILS_H
 
+    #define ADDRESS_SIZE 256
+
     typedef enum {
         STATE_OK,
         STATE_WARNING,

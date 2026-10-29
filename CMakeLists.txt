@@ -16,6 +16,10 @@ add_executable(${PROJECT_NAME} WIN32
         include/clipboard.h
         src/utils.c
         include/utils.h
+        src/config_read.c
+        include/config_read.h
+        src/crypto.c
+        include/crypto.h
         lib/ini.c
         lib/ini.h)
 

