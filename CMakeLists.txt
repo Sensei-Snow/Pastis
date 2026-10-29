@@ -13,10 +13,8 @@ add_executable(${PROJECT_NAME} WIN32
         src/main.c
         src/clipboard.c
         include/clipboard.h
-        include/utils.h
         src/utils.c
-        include/test.h
-        src/test.c)
+        include/utils.h)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
