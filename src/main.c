@@ -3,6 +3,7 @@
 
 #include "clipboard.h"
 #include "utils.h"
+#include "../lib/ini.h"
 
 StateCodeProcess main(void)
 {

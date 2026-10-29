@@ -7,6 +7,7 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 file(GLOB SOURCES "src/*.c")
+file(GLOB SOURCES "lib/*.c")
 
 add_executable(${PROJECT_NAME} WIN32
         ${SOURCES}
@@ -14,7 +15,9 @@ add_executable(${PROJECT_NAME} WIN32
         src/clipboard.c
         include/clipboard.h
         src/utils.c
-        include/utils.h)
+        include/utils.h
+        lib/ini.c
+        lib/ini.h)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
